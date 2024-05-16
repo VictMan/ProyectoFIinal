@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../public/css/styles.css">
     <title>Iniciar sesión</title>
-    <link rel="stylesheet" href="../public/css/styles.css">
 </head>
 <body>
 
@@ -19,9 +19,9 @@
 
     <div id = 'enlaces'>
         <a href="password_reset.php">Recuperar contraseña</a><br>
-        <a href="register.php?type=user">Crear cuenta como usuario</a>
-        <a href="register.php?ytpe=admin">Crear cuenta como gimnasio</a>
+        <a href="register_user.php">Crear cuenta como usuario</a><br>
+        <a href="register_admin.php">Crear cuenta como gimnasio/club</a>
     </div>
-
+    
 </body>
 </html>
