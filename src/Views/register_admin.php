@@ -9,12 +9,15 @@
     <title>Crear club</title>
     <?php
     include_once ('../../Database/conexion.php');
+    include_once('../instruments/funcionesPHP.php');
 
     $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
+    $userName = isset($_POST['userName']) ? $_POST['userName'] : '';
     $clubName = isset($_POST['club']) ? $_POST['club'] : '';
     $password = isset($_POST['contraseña']) ? $_POST['contraseña'] : '';
     $nombreErr = '';
     $clubNameErr = '';
+    $userNameErr = '';
 
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (empty($nombre)) {
@@ -23,24 +26,30 @@
             $nombreErr = "";
         }
 
+        if (empty($userName)) {
+            $userNameErr = "Por favor, introduce tu nombre de usuario";
+        } else {
+            $userNameErr = comprobarUserName(($userName));
+        }
+
         if (empty($clubName)) {
             $clubNameErr = "Por favor, introduce el nombre de tu club";
         } else {
             $conexion = conectarBD();
             $sql_match = "SELECT Nombre FROM Club WHERE Nombre = '$clubName'";
             $clubNameMatch = $conexion->query($sql_match);
-
+            
             if ($clubNameMatch->num_rows > 0) {
-                $clubNameErr = "El nombre del club ya está en uso";
+                $clubNameErr = "Este nombre ya se está usando";
             } else{
                 $clubNameErr = "";
             }
             desconectarBD($conexion);
         }
 
-        if (empty(trim($nombreErr)) && empty(trim($clubNameErr))) {
+        if (empty(trim($nombreErr)) && empty(trim($clubNameErr)) && empty(trim($userNameErr))) {
             $conexion = conectarBD();
-            $sql = "INSERT INTO club(Propietario,Nombre,Contraseña) VALUES('$nombre','$clubName','$password')";
+            $sql = "INSERT INTO club(Propietario,Nombre,Usuario,Contraseña) VALUES('$nombre','$clubName','$userName','$password')";
             if ($conexion->query($sql) === true) {
                 header('Location:./login.php');
                 echo "Registro insertado correctamente.";
@@ -70,7 +79,7 @@
     </script>
     <form id = 'nuevoClub' action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
         <label>Nombre y apellido:</label><br>
-        <input type="text" id="nombre" name="nombre" placeholder="Nombre y apellido" value="<?php if (isset($_POST['nombre']))
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre y apellido del propietario" value="<?php if (isset($_POST['nombre']))
             echo $_POST['nombre']; ?>">
         <br>
         <span class="error"><?php echo $nombreErr; ?></span>
@@ -83,6 +92,13 @@
         <span class="error"><?php echo $clubNameErr; ?></span>
         <br><br>
 
+        <label>Nombre de Usuario:</label>
+        <input type="text" id="userName" name="userName" placeholder="Nombre de Usuario"
+            value="<?php echo $userName ?>">
+        <br>
+        <span class="error"><?php echo $userNameErr; ?></span>
+        <br><br>
+
         <label>Contraseña:</label><br>
         <input type="password" id="contraseña" name="contraseña" placeholder="Contraseña">
         <br><br>
@@ -91,7 +107,7 @@
         <input type="password" id="contraseña2" placeholder="Confirma contraseña">
         <span id='error-container' class='error'></span>
         <br><br>
-        <input type="submit" name="entrar" id="crearClub" value="Crear">
+        <input type="submit" name="crearClub" id="crearClub" value="Crear">
     </form>
 </body>
 
