@@ -28,65 +28,78 @@
             background-color: #f2f2f2;
             text-align: left;
         }
+        .profile-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
-    <?php
-    session_start();
-    if (!isset($_SESSION['username'])) {
-        header('Location: login.php');
-        exit();
-    }
+<?php
+session_start();
+if (!isset($_SESSION['username'])) {
+    header('Location: login.php');
+    exit();
+}
 
-    include_once ('../../Database/conexion.php');
-    $conexion = conectarBD();
+include_once ('../../Database/conexion.php');
+$conexion = conectarBD();
 
-    $userUsername = $_SESSION['username'];
+$userUsername = $_SESSION['username'];
 
-    // Obtener el nombre del club
-    $clubQuery = "SELECT Club.Nombre 
-                  FROM Club 
-                  JOIN Socio ON Club.Nombre = Socio.Club 
-                  WHERE Socio.Usuario = '$userUsername'";
-    $clubResult = $conexion->query($clubQuery);
-    $nombreClub = '';
-    if ($clubResult->num_rows > 0) {
-        $clubRow = $clubResult->fetch_assoc();
-        $nombreClub = $clubRow['Nombre'];
-    }
+// Obtener el nombre del club y la foto de perfil
+$clubQuery = "SELECT Club.Nombre, Socio.Foto 
+              FROM Club 
+              JOIN Socio ON Club.Nombre = Socio.Club 
+              WHERE Socio.Usuario = '$userUsername'";
+$clubResult = $conexion->query($clubQuery);
+$nombreClub = '';
+$fotoPerfil = '';
+if ($clubResult->num_rows > 0) {
+    $clubRow = $clubResult->fetch_assoc();
+    $nombreClub = $clubRow['Nombre'];
+    $fotoPerfil = $clubRow['Foto'];
+}
 
-    // Obtener la información de pagos del usuario
-    $sql = "SELECT Nombre, `Último pago`, `Próximo pago`, `Cuota pagada`
-            FROM Socio
-            WHERE Usuario = '$userUsername'";
-    $selectMiTabla = $conexion->prepare($sql);
-    $selectMiTabla->execute();
-    $result = $selectMiTabla->get_result();
+// Usar foto genérica si no hay foto de perfil
+if (empty($fotoPerfil)) {
+    $fotoPerfil = '../../Database/imagesPerfil/perfilGeneric.jpg';
+}
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $nombre = $row['Nombre'];
-        $fecha_ultimo_pago = $row['Último pago'];
-        $fecha_proximo_pago = $row['Próximo pago'];
-        $cuota_pagada = $row['Cuota pagada'];
+// Obtener la información de pagos del usuario
+$sql = "SELECT Nombre, `Último pago`, `Próximo pago`, `Cuota pagada`
+        FROM Socio
+        WHERE Usuario = '$userUsername'";
+$selectMiTabla = $conexion->prepare($sql);
+$selectMiTabla->execute();
+$result = $selectMiTabla->get_result();
 
-        $status_icon = $cuota_pagada ? "<i class='fas fa-check-circle status-icon status-paid'></i>" : "<i class='fas fa-times-circle status-icon status-unpaid'></i>";
-    } else {
-        $nombre = $fecha_ultimo_pago = $fecha_proximo_pago = $status_icon = '';
-    }
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $nombre = $row['Nombre'];
+    $fecha_ultimo_pago = $row['Último pago'];
+    $fecha_proximo_pago = $row['Próximo pago'];
+    $cuota_pagada = $row['Cuota pagada'];
 
-    desconectarBD($conexion);
-    ?>
+    $status_icon = $cuota_pagada ? "<i class='fas fa-check-circle status-icon status-paid'></i>" : "<i class='fas fa-times-circle status-icon status-unpaid'></i>";
+} else {
+    $nombre = $fecha_ultimo_pago = $fecha_proximo_pago = $status_icon = '';
+}
+
+desconectarBD($conexion);
+?>
 
     <h2>Información de Pagos</h2>
     <h3>Club: <?php echo $nombreClub; ?></h3>
+    <img src="<?php echo $fotoPerfil; ?>" alt="Foto de perfil" class="profile-photo">
     <table class="info-table">
         <tr>
             <th>Nombre</th>
             <th>Fecha del último pago</th>
             <th>Fecha del próximo pago</th>
             <th>Estado de pago</th>
-            <th>Factura</th>
+            <th>última Factura</th>
         </tr>
         <tr>
             <td><?php echo $nombre; ?></td>

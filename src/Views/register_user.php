@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
     <script src="../instruments/jquery-3.7.1.min.js"></script>
     <script src="../instruments/funciones.js"></script>
     <?php
-    include_once ('../../Database/conexion.php');
+    include_once('../../Database/conexion.php');
     include_once('../instruments/funcionesPHP.php');
 
     $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
@@ -18,6 +18,7 @@
     $nombreErr = '';
     $userNameErr = '';
     $clubErr = '';
+
     function dibuja_select($nomSel, $tabla, $campo)
     {
         $html = "<select name='$nomSel'>\n";
@@ -63,7 +64,27 @@
 
         if (empty(trim($nombreErr)) && empty(trim($userNameErr)) && empty(trim($clubErr))) {
             $conexion = conectarBD();
-            $sql = "INSERT INTO socio(Nombre, Usuario, Contraseña, `Cuota Pagada`, `Último pago`, `Próximo pago`, Club) VALUES('$nombre','$userName','$contraseña', 'false', '','', '$club')";
+
+            // Manejo del archivo subido
+            $foto = '';
+            if (isset($_FILES['Foto']) && $_FILES['Foto']['error'] === UPLOAD_ERR_OK) {
+                $fileType = mime_content_type($_FILES['Foto']['tmp_name']);
+                if (in_array($fileType, ['image/jpeg', 'image/png', 'image/gif'])) {
+                    $Foto = basename($_FILES['Foto']['name']);
+                    $uploadDir = '../../public/img/';
+                    $uploadFile = $uploadDir . $foto;
+
+                    if (!move_uploaded_file($_FILES['Foto']['tmp_name'], $uploadFile)) {
+                        echo "Error al subir la foto de perfil.";
+                        exit();
+                    }
+                } else {
+                    echo "Solo se permiten archivos JPG, PNG y GIF.";
+                    exit();
+                }
+            }
+
+            $sql = "INSERT INTO socio(Nombre, Usuario, Contraseña, `Cuota Pagada`, `Último pago`, `Próximo pago`, Club, `Foto`) VALUES('$nombre','$userName','$contraseña', 'false', '','', '$club', '$foto')";
             if ($conexion->query($sql) === true) {
                 header('Location:./login.php');
                 echo "Registro insertado correctamente.";
@@ -80,16 +101,29 @@
                 var contraseña = $('#contraseña').val();
                 var contraseña2 = $('#contraseña2').val();
                 var errorContainer = $('#error-container');
+                var fileInput = $('#fotoPerfil')[0];
+                var file = fileInput.files[0];
+                var fileErrorContainer = $('#file-error-container');
 
                 e.preventDefault();
+
+                if (file) {
+                    var fileType = file.type;
+                    var validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                    if ($.inArray(fileType, validImageTypes) < 0) {
+                        fileErrorContainer.text('Solo se permiten archivos JPG, PNG y GIF.').show();
+                        return;
+                    } else {
+                        fileErrorContainer.text('').hide();
+                    }
+                }
 
                 if (validatePassword(contraseña, contraseña2, errorContainer)) $('#nuevoUsuario').submit();
             });
         });
-
     </script>
 
-    <form  id="nuevoUsuario" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+    <form id="nuevoUsuario" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
         <label>Nombre y apellido:</label>
         <input type="text" id="nombre" name="nombre" placeholder="Nombre y apellido" value="<?php echo $nombre ?>">
         <br>
@@ -116,7 +150,12 @@
         <span id='error-container' class='error'></span>
         <br><br>
 
-        <input type="submit" name="crearUsuario" id="crearUsuario" value="Crear Perfil" >
+        <label>Foto de perfil:</label>
+        <input type="file" id="fotoPerfil" name="fotoPerfil"><br>
+        <span id='file-error-container' class='error'></span>
+        <br><br>
+
+        <input type="submit" name="crearUsuario" id="crearUsuario" value="Crear Perfil">
         <br>
     </form>
 </body>
