@@ -6,7 +6,7 @@
 
 	function conectarBD(){
 	
-		global $servidor,$usuario,$password,$bd;
+		global $servidor,$usuario,$bd;
 		$conexion = new mysqli($servidor,$usuario,"",$bd);
 
 		if ($conexion->connect_errno) {
@@ -23,22 +23,4 @@
 	function desconectarBD($conexion){
 		$conexion->close();
 	}
-
-	// function actualizarCuota($socioUsuario, $cuotaPagada, $fechaUltimoPago, $fechaProximoPago){
-	// 	$conexion = conectarBD();
-	
-	// 	$socioUsuario = $conexion->real_escape_string($socioUsuario);
-	// 	$cuotaPagada = (int)$cuotaPagada;
-	// 	$fechaUltimoPago = $conexion->real_escape_string($fechaUltimoPago);
-	// 	$fechaProximoPago = $conexion->real_escape_string($fechaProximoPago);
-	
-	// 	$modificacion = "UPDATE Socio 
-	// 			SET `Cuota pagada` = '$cuotaPagada', `Último pago` = '$fechaUltimoPago', `Próximo pago` = '$fechaProximoPago' 
-	// 			WHERE Usuario = '$socioUsuario'";
-	
-	// 	$modificacionHecha = $conexion->query($modificacion);
-	
-	// 	desconectarBD($conexion);
-	// 	return $modificacionHecha;
-	// }
 ?>
