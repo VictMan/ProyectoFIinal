@@ -2,13 +2,12 @@
 
 	$servidor="localhost";
 	$usuario="root";
-	$password="";
 	$bd="sociod";
 
 	function conectarBD(){
 	
 		global $servidor,$usuario,$password,$bd;
-		$conexion = new mysqli($servidor,$usuario,$password,$bd);
+		$conexion = new mysqli($servidor,$usuario,"",$bd);
 
 		if ($conexion->connect_errno) {
 			echo "Error: Fallo al conectarse a MySQL debido a: \n"; 
