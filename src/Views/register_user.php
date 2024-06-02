@@ -65,7 +65,6 @@
         if (empty(trim($nombreErr)) && empty(trim($userNameErr)) && empty(trim($clubErr))) {
             $conexion = conectarBD();
 
-            // Manejo del archivo subido
             $foto = '';
             if (isset($_FILES['Foto']) && $_FILES['Foto']['error'] === UPLOAD_ERR_OK) {
                 $fileType = mime_content_type($_FILES['Foto']['tmp_name']);
@@ -84,7 +83,7 @@
                 }
             }
 
-            $sql = "INSERT INTO socio(Nombre, Usuario, Contraseña, `Cuota Pagada`, `Último pago`, `Próximo pago`, Club, `Foto`) VALUES('$nombre','$userName','$contraseña', 'false', '','', '$club', '$foto')";
+            $sql = "INSERT INTO socio(Nombre, Usuario, Contraseña, `Cuota Pagada`, `Último pago`, `Próximo pago`, Club, Foto, Tipo) VALUES('$nombre','$userName','$contraseña', 'false', '','', '$club', '$foto', 'socio')";
             if ($conexion->query($sql) === true) {
                 header('Location:./login.php');
                 echo "Registro insertado correctamente.";

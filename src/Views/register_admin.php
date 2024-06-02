@@ -49,9 +49,31 @@
 
         if (empty(trim($nombreErr)) && empty(trim($clubNameErr)) && empty(trim($userNameErr))) {
             $conexion = conectarBD();
-            $sql = "INSERT INTO club(Propietario,Nombre,Usuario,Contraseña) VALUES('$nombre','$clubName','$userName','$password')";
+            $logoPath = '';
+
+            // Manejar la subida del archivo
+            if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = '../../Database/imagesPerfil/';
+                $fileName = basename($_FILES['logo']['name']);
+                $targetFilePath = $uploadDir . $fileName;
+                $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
+
+                // Validar el tipo de archivo
+                $allowedTypes = array('jpg', 'png', 'jpeg', 'gif');
+                if (in_array($fileType, $allowedTypes)) {
+                    if (move_uploaded_file($_FILES['logo']['tmp_name'], $targetFilePath)) {
+                        $logoPath = $targetFilePath;
+                    } else {
+                        echo "Error al subir el archivo.";
+                    }
+                } else {
+                    echo "Por favor, sube un archivo de imagen válido (jpg, jpeg, png, gif).";
+                }
+            }
+
+            $sql = "INSERT INTO club(Propietario, Nombre, Usuario, Contraseña, Logo, Tipo) VALUES('$nombre', '$clubName', '$userName', '$password', '$logoPath', 'admin')";
             if ($conexion->query($sql) === true) {
-                header('Location:./login.php');
+                header('Location: ./login.php');
                 echo "Registro insertado correctamente.";
             } else {
                 echo "Error al insertar el registro: " . $conexion->error;
@@ -72,29 +94,25 @@
 
                 e.preventDefault();
                 
-                if(validatePassword(contraseña, contraseña2, errorContainer)) $('#nuevoClub').submit();
+                if (validatePassword(contraseña, contraseña2, errorContainer)) $('#nuevoClub').submit();
             });
         });
-
     </script>
-    <form id = 'nuevoClub' action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+    <form id="nuevoClub" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
         <label>Nombre y apellido:</label><br>
-        <input type="text" id="nombre" name="nombre" placeholder="Nombre y apellido del propietario" value="<?php if (isset($_POST['nombre']))
-            echo $_POST['nombre']; ?>">
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre y apellido del propietario" value="<?php if (isset($_POST['nombre'])) echo $_POST['nombre']; ?>">
         <br>
         <span class="error"><?php echo $nombreErr; ?></span>
         <br><br>
 
         <label>Nombre de tu club o gimnasio:</label><br>
-        <input type="text" id="club" name="club" placeholder="Nombre de tu club o gimnasio" value="<?php if (isset($_POST['club']))
-            echo $_POST['club']; ?>">
+        <input type="text" id="club" name="club" placeholder="Nombre de tu club o gimnasio" value="<?php if (isset($_POST['club'])) echo $_POST['club']; ?>">
         <br>
         <span class="error"><?php echo $clubNameErr; ?></span>
         <br><br>
 
         <label>Nombre de Usuario:</label>
-        <input type="text" id="userName" name="userName" placeholder="Nombre de Usuario"
-            value="<?php echo $userName ?>">
+        <input type="text" id="userName" name="userName" placeholder="Nombre de Usuario" value="<?php echo $userName ?>">
         <br>
         <span class="error"><?php echo $userNameErr; ?></span>
         <br><br>
@@ -107,6 +125,11 @@
         <input type="password" id="contraseña2" placeholder="Confirma contraseña">
         <span id='error-container' class='error'></span>
         <br><br>
+
+        <label>Subir Logo:</label><br>
+        <input type="file" id="logo" name="logo">
+        <br><br>
+
         <input type="submit" name="crearClub" id="crearClub" value="Crear">
     </form>
 </body>
