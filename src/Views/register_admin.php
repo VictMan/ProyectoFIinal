@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="../instruments/jquery-3.7.1.min.js"></script>
     <script src="../instruments/funciones.js"></script>
+    <link rel="stylesheet" href="../../public/css/styles.css">
     <title>Crear club</title>
     <?php
     include_once ('../../Database/conexion.php');
@@ -71,7 +72,7 @@
                 }
             }
 
-            $sql = "INSERT INTO club(Propietario, Nombre, Usuario, Contraseña, Logo, Tipo) VALUES('$nombre', '$clubName', '$userName', '$password', '$logoPath', 'admin')";
+            $sql = "INSERT INTO club(Propietario, Nombre, Usuario, Contraseña, Logo) VALUES('$nombre', '$clubName', '$userName', '$password', '$logoPath')";
             if ($conexion->query($sql) === true) {
                 header('Location: ./login.php');
                 echo "Registro insertado correctamente.";
@@ -85,6 +86,9 @@
 </head>
 
 <body>
+    <?php
+    include_once('../includes/cabecera.php');
+    ?>
     <script>
         $(document).ready(function () {
             $('#crearClub').click(function (e) {

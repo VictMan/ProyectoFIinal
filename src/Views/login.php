@@ -26,6 +26,7 @@
 
         if ($result_socio->num_rows > 0) {
             $_SESSION['username'] = $user;
+            $_SESSION['type'] = 'socio';
             desconectarBD($conexion);
             header('Location: user_view.php');
             exit();
@@ -36,6 +37,7 @@
 
         if ($result_club->num_rows > 0) {
             $_SESSION['username'] = $user;
+            $_SESSION['type'] = 'admin'; 
             desconectarBD($conexion);
             header('Location: admin_view.php');
             exit();

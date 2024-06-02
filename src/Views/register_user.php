@@ -83,7 +83,7 @@
                 }
             }
 
-            $sql = "INSERT INTO socio(Nombre, Usuario, Contraseña, `Cuota Pagada`, `Último pago`, `Próximo pago`, Club, Foto, Tipo) VALUES('$nombre','$userName','$contraseña', 'false', '','', '$club', '$foto', 'socio')";
+            $sql = "INSERT INTO socio(Nombre, Usuario, Contraseña, `Cuota Pagada`, `Último pago`, `Próximo pago`, Club, Foto) VALUES('$nombre','$userName','$contraseña', 'false', '','', '$club', '$foto')";
             if ($conexion->query($sql) === true) {
                 header('Location:./login.php');
                 echo "Registro insertado correctamente.";
