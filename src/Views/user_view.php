@@ -6,43 +6,15 @@
     <link rel="stylesheet" href="../../public/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Vista de Usuario</title>
-    <style>
-        .status-icon {
-            font-size: 24px;
-        }
-        .status-paid {
-            color: green;
-        }
-        .status-unpaid {
-            color: red;
-        }
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .info-table th, .info-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        .info-table th {
-            background-color: #f2f2f2;
-            text-align: left;
-        }
-        .profile-photo {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-        }
-    </style>
 </head>
 <body>
 <?php
 session_start();
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['username'])|| $_SESSION['type'] !== 'socio') {
     header('Location: login.php');
     exit();
 }
-
+include_once('../includes/cabecera.php');
 include_once ('../../Database/conexion.php');
 $conexion = conectarBD();
 
@@ -99,7 +71,7 @@ desconectarBD($conexion);
             <th>Fecha del último pago</th>
             <th>Fecha del próximo pago</th>
             <th>Estado de pago</th>
-            <th>última Factura</th>
+            <th>Ùltimo justificante</th>
         </tr>
         <tr>
             <td><?php echo $nombre; ?></td>
