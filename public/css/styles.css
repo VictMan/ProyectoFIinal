@@ -7,10 +7,11 @@ nav {
     overflow: hidden;
 }
 
-nav a {
+nav li {
     float: left;
     display: block;
     color: white;
+    list-style-type: none;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
