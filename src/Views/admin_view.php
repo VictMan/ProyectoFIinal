@@ -8,6 +8,57 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="../instruments/jquery-3.7.1.min.js"></script>
     <title>Vista de Administrador</title>
+    <style>
+        /* Estilos para el modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .close, .confirm, .cancel {
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .close {
+            background-color: #aaa;
+        }
+
+        .confirm {
+            background-color: #4CAF50;
+        }
+
+        .cancel {
+            background-color: #f44336;
+        }
+
+        .close:hover, .close:focus, .confirm:hover, .confirm:focus, .cancel:hover, .cancel:focus {
+            background-color: #555;
+        }
+    </style>
 </head>
 
 <body>
@@ -91,50 +142,75 @@
         ?>
     </table>
 
+    <!-- Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span id="modalText">¿Estás seguro de que deseas borrar este socio?</span><br><br>
+            <button class="confirm" id="confirmDelete">Confirmar</button>
+            <button class="cancel" id="cancelDelete">Cancelar</button>
+        </div>
+    </div>
+
     <script>
         document.querySelectorAll('.delete-button').forEach(button => {
             button.addEventListener('click', function () {
                 let socioUsuario = this.getAttribute('data-id');
-                if (confirm('¿Estás seguro de que deseas borrar este socio?')) {
-                    fetch('../instruments/borrar_socio.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({ socioUsuario: socioUsuario }).toString()
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                let row = document.querySelector(`tr[data-id='${socioUsuario}']`);
-                                row.remove();
-                            } else {
-                                alert('Error al borrar el socio');
-                            }
-                        });
-                }
+                document.getElementById('deleteModal').style.display = 'block';
+                document.getElementById('confirmDelete').setAttribute('data-id', socioUsuario);
             });
         });
 
-        document.querySelectorAll('.cuota-switch').forEach(switchChnage => {
-            let row = switchChnage.closest('tr');
+        document.getElementById('confirmDelete').addEventListener('click', function () {
+            let socioUsuario = this.getAttribute('data-id');
+            fetch('../instruments/borrar_socio.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ socioUsuario: socioUsuario }).toString()
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let row = document.querySelector(`tr[data-id='${socioUsuario}']`);
+                    row.remove();
+                } else {
+                    alert('Error al borrar el socio');
+                }
+                document.getElementById('deleteModal').style.display = 'none';
+            });
+        });
+
+        document.getElementById('cancelDelete').addEventListener('click', function () {
+            document.getElementById('deleteModal').style.display = 'none';
+        });
+
+        window.onclick = function(event) {
+            let modal = document.getElementById('deleteModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        document.querySelectorAll('.cuota-switch').forEach(switchChange => {
+            let row = switchChange.closest('tr');
             let fechaProximoPago = new Date(row.querySelector('.fecha-proximo-pago').textContent.split('-').reverse().join('-'));
             let today = new Date();
 
             if (today >= fechaProximoPago) {
-                switchChnage.checked = false;
-                actualizarCuota(switchChnage, false);
+                switchChange.checked = false;
+                actualizarCuota(switchChange, false);
             }
 
-            switchChnage.addEventListener('change', function () {
+            switchChange.addEventListener('change', function () {
                 actualizarCuota(this, this.checked);
             });
         });
 
-        function actualizarCuota(switchChnage, isManualChange) {
-            let row = switchChnage.closest('tr');
+        function actualizarCuota(switchChange, isManualChange) {
+            let row = switchChange.closest('tr');
             let socioUsuario = row.getAttribute('data-id');
-            let cuotaPagada = switchChnage.checked ? 1 : 0;
+            let cuotaPagada = switchChange.checked ? 1 : 0;
             let fechaUltimoPago = null;
             let fechaProximoPago = null;
 
@@ -162,17 +238,17 @@
                     fechaProximoPago: isManualChange && cuotaPagada ? fechaProximoPago : null // Only send if manual change and cuota is paid
                 }).toString()
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        if (cuotaPagada) {
-                            row.querySelector('.fecha-ultimo-pago').textContent = formatDate(fechaUltimoPago);
-                            row.querySelector('.fecha-proximo-pago').textContent = formatDate(fechaProximoPago);
-                        }
-                    } else {
-                        alert('Error al actualizar la cuota');
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (cuotaPagada) {
+                        row.querySelector('.fecha-ultimo-pago').textContent = formatDate(fechaUltimoPago);
+                        row.querySelector('.fecha-proximo-pago').textContent = formatDate(fechaProximoPago);
                     }
-                });
+                } else {
+                    alert('Error al actualizar la cuota');
+                }
+            });
         }
 
         function formatDate(dateString) {
