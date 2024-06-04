@@ -50,8 +50,8 @@ $result = $selectMiTabla->get_result();
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $nombre = $row['Nombre'];
-    $fecha_ultimo_pago = $row['Último pago'];
-    $fecha_proximo_pago = $row['Próximo pago'];
+    $fecha_ultimo_pago = date("d-m-Y", strtotime($row['Último pago']));
+    $fecha_proximo_pago = date("d-m-Y", strtotime($row['Próximo pago']));
     $cuota_pagada = $row['Cuota pagada'];
 
     $status_icon = $cuota_pagada ? "<i class='fas fa-check-circle status-icon status-paid'></i>" : "<i class='fas fa-times-circle status-icon status-unpaid'></i>";
@@ -71,7 +71,7 @@ desconectarBD($conexion);
             <th>Fecha del último pago</th>
             <th>Fecha del próximo pago</th>
             <th>Estado de pago</th>
-            <th>Ùltimo justificante</th>
+            <th>Último justificante</th>
         </tr>
         <tr>
             <td><?php echo $nombre; ?></td>

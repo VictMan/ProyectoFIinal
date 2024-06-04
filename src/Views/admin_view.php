@@ -63,8 +63,8 @@
                 $nombre = $row['Nombre'];
                 $usuario = $row['Usuario'];
                 $cuota_pagada = $row['Cuota pagada'];
-                $fecha_ultimo_pago = $row['Último pago'];
-                $fecha_proximo_pago = $row['Próximo pago'];
+                $fecha_ultimo_pago = date("d-m-Y", strtotime($row['Último pago']));
+                $fecha_proximo_pago = date("d-m-Y", strtotime($row['Próximo pago']));
 
                 $checked = $cuota_pagada ? 'checked' : '';
                 echo "<tr data-id='$usuario'>
@@ -92,23 +92,11 @@
     </table>
 
     <script>
-        // Toggle menu visibility on small screens
-        document.querySelector('.menu-icon').addEventListener('click', function () {
-            let x = document.querySelectorAll('nav a');
-            for (let i = 0; i < x.length; i++) {
-                if (x[i].style.display === 'block') {
-                    x[i].style.display = 'none';
-                } else {
-                    x[i].style.display = 'block';
-                }
-            }
-        });
-
         document.querySelectorAll('.delete-button').forEach(button => {
             button.addEventListener('click', function () {
                 let socioUsuario = this.getAttribute('data-id');
                 if (confirm('¿Estás seguro de que deseas borrar este socio?')) {
-                    fetch('borrar_socio.php', {
+                    fetch('../instruments/borrar_socio.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
@@ -128,36 +116,41 @@
             });
         });
 
-        document.querySelectorAll('.cuota-switch').forEach(switchEl => {
-            // Check if the next payment date has passed and uncheck the switch if necessary
-            let row = switchEl.closest('tr');
-            let fechaProximoPago = new Date(row.querySelector('.fecha-proximo-pago').textContent);
+        document.querySelectorAll('.cuota-switch').forEach(switchChnage => {
+            let row = switchChnage.closest('tr');
+            let fechaProximoPago = new Date(row.querySelector('.fecha-proximo-pago').textContent.split('-').reverse().join('-'));
             let today = new Date();
 
             if (today >= fechaProximoPago) {
-                switchEl.checked = false;
-                actualizarCuota(switchEl, false);
+                switchChnage.checked = false;
+                actualizarCuota(switchChnage, false);
             }
 
-            switchEl.addEventListener('change', function () {
+            switchChnage.addEventListener('change', function () {
                 actualizarCuota(this, this.checked);
             });
         });
 
-        function actualizarCuota(switchEl, cuotaPagada) {
-            let row = switchEl.closest('tr');
+        function actualizarCuota(switchChnage, isManualChange) {
+            let row = switchChnage.closest('tr');
             let socioUsuario = row.getAttribute('data-id');
+            let cuotaPagada = switchChnage.checked ? 1 : 0;
             let fechaUltimoPago = null;
             let fechaProximoPago = null;
 
             if (cuotaPagada) {
-                fechaUltimoPago = new Date().toISOString().split('T')[0];
-                fechaProximoPago = new Date();
-                fechaProximoPago.setMonth(fechaProximoPago.getMonth() + 1);
-                fechaProximoPago = fechaProximoPago.toISOString().split('T')[0];
+                let now = new Date();
+                fechaUltimoPago = now.toISOString().split('T')[0];
+
+                let nextMonth = new Date(now.setMonth(now.getMonth() + 1));
+                let nextYear = nextMonth.getFullYear();
+                let nextMonthNumber = nextMonth.getMonth() + 1;
+                let nextDay = nextMonth.getDate();
+
+                fechaProximoPago = new Date(nextYear, nextMonthNumber - 1, nextDay).toISOString().split('T')[0];
             }
 
-            fetch('actualizar_cuota_Socio.php', {
+            fetch('../instruments/actualizar_cuota_Socio.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -165,28 +158,26 @@
                 body: new URLSearchParams({
                     socioUsuario: socioUsuario,
                     cuotaPagada: cuotaPagada,
-                    fechaUltimoPago: fechaUltimoPago,
-                    fechaProximoPago: fechaProximoPago
+                    fechaUltimoPago: isManualChange && cuotaPagada ? fechaUltimoPago : null, // Only send if manual change and cuota is paid
+                    fechaProximoPago: isManualChange && cuotaPagada ? fechaProximoPago : null // Only send if manual change and cuota is paid
                 }).toString()
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         if (cuotaPagada) {
-                            let fechaUltimoPagoEl = row.querySelector('.fecha-ultimo-pago');
-                            let fechaProximoPagoEl = row.querySelector('.fecha-proximo-pago');
-                            fechaUltimoPagoEl.textContent = fechaUltimoPago;
-                            fechaProximoPagoEl.textContent = fechaProximoPago;
-                        } else {
-                            let fechaUltimoPagoEl = row.querySelector('.fecha-ultimo-pago');
-                            let fechaProximoPagoEl = row.querySelector('.fecha-proximo-pago');
-                            fechaUltimoPagoEl.textContent = '';
-                            fechaProximoPagoEl.textContent = '';
+                            row.querySelector('.fecha-ultimo-pago').textContent = formatDate(fechaUltimoPago);
+                            row.querySelector('.fecha-proximo-pago').textContent = formatDate(fechaProximoPago);
                         }
                     } else {
                         alert('Error al actualizar la cuota');
                     }
                 });
+        }
+
+        function formatDate(dateString) {
+            let [year, month, day] = dateString.split('-');
+            return `${day}-${month}-${year}`;
         }
     </script>
 </body>
