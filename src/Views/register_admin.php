@@ -72,7 +72,9 @@
                 }
             }
 
-            $sql = "INSERT INTO club(Propietario, Nombre, Usuario, Contraseña, Logo) VALUES('$nombre', '$clubName', '$userName', '$password', '$logoPath')";
+            $passCifrada = password_hash($password, PASSWORD_DEFAULT);
+
+            $sql = "INSERT INTO club(Propietario, Nombre, Usuario, Contraseña, Logo) VALUES('$nombre', '$clubName', '$userName', '$passCifrada', '$logoPath')";
             if ($conexion->query($sql) === true) {
                 header('Location: ./login.php');
                 echo "Registro insertado correctamente.";
@@ -86,9 +88,6 @@
 </head>
 
 <body>
-    <?php
-    include_once('../includes/cabecera.php');
-    ?>
     <script>
         $(document).ready(function () {
             $('#crearClub').click(function (e) {

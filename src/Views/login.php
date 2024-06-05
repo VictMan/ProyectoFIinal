@@ -21,49 +21,70 @@
         $user = $_POST['username'];
         $pass = $_POST['password'];
 
-        $sql_socio = "SELECT * FROM Socio WHERE Usuario ='$user' AND Contraseña ='$pass'";
-        $result_socio = $conexion->query($sql_socio);
+        // Comprobar si es un socio
+        $sql_socio = "SELECT * FROM Socio WHERE Usuario = ?";
+        $stmt_socio = $conexion->prepare($sql_socio);
+        $stmt_socio->bind_param('s', $user);
+        $stmt_socio->execute();
+        $result_socio = $stmt_socio->get_result();
 
         if ($result_socio->num_rows > 0) {
-            $_SESSION['username'] = $user;
-            $_SESSION['type'] = 'socio';
-            desconectarBD($conexion);
-            header('Location: user_view.php');
-            exit();
+            $socio = $result_socio->fetch_assoc();
+            if (password_verify($pass, $socio['Contraseña'])) {
+                $_SESSION['username'] = $user;
+                $_SESSION['type'] = 'socio';
+                desconectarBD($conexion);
+                header('Location: user_view.php');
+                exit();
+            }
         }
 
-        $sql_club = "SELECT * FROM Club WHERE Usuario ='$user' AND Contraseña ='$pass'";
-        $result_club = $conexion->query($sql_club);
+        $sql_club = "SELECT * FROM Club WHERE Usuario = ?";
+        $stmt_club = $conexion->prepare($sql_club);
+        $stmt_club->bind_param('s', $user);
+        $stmt_club->execute();
+        $result_club = $stmt_club->get_result();
 
         if ($result_club->num_rows > 0) {
-            $_SESSION['username'] = $user;
-            $_SESSION['type'] = 'admin'; 
-            desconectarBD($conexion);
-            header('Location: admin_view.php');
-            exit();
-        } else {
-            $error_message = "Usuario o contraseña incorrectos";
+            $club = $result_club->fetch_assoc();
+            if (password_verify($pass, $club['Contraseña'])) {
+                $_SESSION['username'] = $user;
+                $_SESSION['type'] = 'admin';
+                desconectarBD($conexion);
+                header('Location: admin_view.php');
+                exit();
+            }
         }
-        desconectarBD($conexion);
 
+        $error_message = "Usuario o contraseña incorrectos";
+        desconectarBD($conexion);
     }
     ?>
-    <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-        <label>Usuario:</label><br>
-        <input type="text" id="username" name="username" placeholder="Usuario" required><br>
-        <label>Contraseña:</label><br>
-        <input type="password" id="password" name="password" placeholder="Contraseña" required><br><br>
-        <span style="color: red;"><?php echo $error_message; ?></span><br>
+    <!DOCTYPE html>
+    <html lang="es">
 
-        <button type="submit">Iniciar sesión</button>
-    </form>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../public/css/styles.css">
+        <title>Iniciar sesión</title>
+    </head>
 
-    <div id='enlaces'>
-        <a href="password_reset.php">Recuperar contraseña</a><br>
-        <a href="register_user.php">Crear cuenta como usuario</a><br>
-        <a href="register_admin.php">Crear cuenta como gimnasio/club</a>
-    </div>
+    <body>
+        <h2>Iniciar sesión</h2>
+        <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+            <label>Usuario:</label><br>
+            <input type="text" id="username" name="username" placeholder="Usuario" required><br>
+            <label>Contraseña:</label><br>
+            <input type="password" id="password" name="password" placeholder="Contraseña" required><br><br>
+            <span style="color: red;"><?php echo $error_message; ?></span><br>
+            <button type="submit">Iniciar sesión</button>
+        </form>
+        <div id='enlaces'>
+            <a href="password_reset.php">Recuperar contraseña</a><br>
+            <a href="register_user.php">Crear cuenta como usuario</a><br>
+            <a href="register_admin.php">Crear cuenta como gimnasio/club</a>
+        </div>
+    </body>
 
-</body>
-
-</html>
+    </html>
