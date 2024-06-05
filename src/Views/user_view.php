@@ -6,6 +6,19 @@
     <link rel="stylesheet" href="../../public/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Vista de Usuario</title>
+    <?php
+    $headerColor = '';
+    if (isset($_COOKIE['headerColor'])) {
+        $headerColor = $_COOKIE['headerColor'];
+    }
+    ?>
+    <style>
+        <?php if ($headerColor): ?>
+            th {
+                background-color: <?php echo $headerColor; ?>;
+            }
+        <?php endif; ?>
+    </style>
 </head>
 <body>
 <?php
@@ -39,7 +52,6 @@ if (empty($fotoPerfil)) {
     $fotoPerfil = '../../Database/imagesPerfil/perfilGeneric.jpg';
 }
 
-// Obtener la información de pagos del usuario
 $sql = "SELECT Nombre, `Último pago`, `Próximo pago`, `Cuota pagada`
         FROM Socio
         WHERE Usuario = '$userUsername'";
