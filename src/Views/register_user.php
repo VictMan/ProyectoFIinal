@@ -83,9 +83,11 @@
                 }
             }
 
-            $sql = "INSERT INTO socio(Nombre, Usuario, Contraseña, `Cuota Pagada`, `Último pago`, `Próximo pago`, Club, Foto) VALUES('$nombre','$userName','$contraseña', 'false', '','', '$club', '$foto')";
+            $hashedPassword = password_hash($contraseña, PASSWORD_DEFAULT);
+
+            $sql = "INSERT INTO socio (Nombre, Usuario, Contraseña, `Cuota Pagada`, `Último pago`, `Próximo pago`, Club, Foto) VALUES ('$nombre', '$userName', '$hashedPassword', 'false', '', '', '$club', '$foto')";
             if ($conexion->query($sql) === true) {
-                header('Location:./login.php');
+                header('Location: ./login.php');
                 echo "Registro insertado correctamente.";
             } else {
                 echo "Error al insertar el registro: " . $conexion->error;
