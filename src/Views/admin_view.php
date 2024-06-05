@@ -8,57 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="../instruments/jquery-3.7.1.min.js"></script>
     <title>Vista de Administrador</title>
-    <style>
-        /* Estilos para el modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0, 0, 0);
-            background-color: rgba(0, 0, 0, 0.4);
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 300px;
-            text-align: center;
-            border-radius: 10px;
-        }
-
-        .close, .confirm, .cancel {
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .close {
-            background-color: #aaa;
-        }
-
-        .confirm {
-            background-color: #4CAF50;
-        }
-
-        .cancel {
-            background-color: #f44336;
-        }
-
-        .close:hover, .close:focus, .confirm:hover, .confirm:focus, .cancel:hover, .cancel:focus {
-            background-color: #555;
-        }
-    </style>
 </head>
 
 <body>
