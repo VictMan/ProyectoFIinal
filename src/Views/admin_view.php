@@ -8,6 +8,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="../instruments/jquery-3.7.1.min.js"></script>
     <title>Vista de Administrador</title>
+    <style>
+        <?php if(isset($_COOKIE['headerColor'])): ?>
+            th {
+                background-color: <?php echo $_COOKIE['headerColor']; ?>;
+            }
+        <?php endif; ?>
+    </style>
 </head>
 
 <body>
@@ -45,7 +52,6 @@
     $selectMiTabla = $conexion->prepare($sql);
     $selectMiTabla->execute();
     $result = $selectMiTabla->get_result();
-
     ?>
 
     <table border="1">
@@ -183,8 +189,8 @@
                 body: new URLSearchParams({
                     socioUsuario: socioUsuario,
                     cuotaPagada: cuotaPagada,
-                    fechaUltimoPago: isManualChange && cuotaPagada ? fechaUltimoPago : null, // Only send if manual change and cuota is paid
-                    fechaProximoPago: isManualChange && cuotaPagada ? fechaProximoPago : null // Only send if manual change and cuota is paid
+                    fechaUltimoPago: isManualChange && cuotaPagada ? fechaUltimoPago : null, 
+                    fechaProximoPago: isManualChange && cuotaPagada ? fechaProximoPago : null
                 }).toString()
             })
             .then(response => response.json())
