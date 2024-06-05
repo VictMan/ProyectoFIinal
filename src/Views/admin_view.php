@@ -45,16 +45,16 @@
 
     echo '<h2>' . $miClub . '</h2>';
     echo '<img src="' . $logoClub . '" alt="Logo del Club" class="club-logo">';
-
-    $sql = "SELECT Nombre, Usuario, `Cuota pagada`, `Último pago`, `Próximo pago`
-            FROM Socio
-            WHERE Club = '$miClub'";
-    $selectMiTabla = $conexion->prepare($sql);
-    $selectMiTabla->execute();
-    $result = $selectMiTabla->get_result();
     ?>
 
-    <table border="1">
+    <label for="filter">Mostrar:</label>
+    <select id="filter" name="filter">
+        <option value="all" <?php if (!isset($_GET['filter']) || $_GET['filter'] == 'all') echo 'selected'; ?>>Todos</option>
+        <option value="paid" <?php if (isset($_GET['filter']) && $_GET['filter'] == 'paid') echo 'selected'; ?>>Al corriente de pago</option>
+        <option value="unpaid" <?php if (isset($_GET['filter']) && $_GET['filter'] == 'unpaid') echo 'selected'; ?>>No han pagado</option>
+    </select>
+
+    <table border="1" id="sociosTable">
         <tr>
             <th>Nombre</th>
             <th>Usuario</th>
@@ -63,38 +63,56 @@
             <th>Fecha del próximo pago</th>
             <th>Borrar Socio</th>
         </tr>
-        <?php
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $nombre = $row['Nombre'];
-                $usuario = $row['Usuario'];
-                $cuota_pagada = $row['Cuota pagada'];
-                $fecha_ultimo_pago = date("d-m-Y", strtotime($row['Último pago']));
-                $fecha_proximo_pago = date("d-m-Y", strtotime($row['Próximo pago']));
+        <tbody id="sociosTableBody">
+            <?php
+            $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
+            $whereClause = '';
 
-                $checked = $cuota_pagada ? 'checked' : '';
-                echo "<tr data-id='$usuario'>
-                        <td>$nombre</td>
-                        <td>$usuario</td>
-                        <td>
-                            <label class='switch'>
-                                <input type='checkbox' class='cuota-switch' data-id='$usuario' $checked>
-                                <span class='slider'></span>
-                            </label>
-                        </td>
-                        <td class='fecha-ultimo-pago' data-id='$usuario'>$fecha_ultimo_pago</td>
-                        <td class='fecha-proximo-pago' data-id='$usuario'>$fecha_proximo_pago</td>
-                        <td>
-                            <span class='delete-button' data-id='$usuario'><i class='fa-solid fa-trash'></i></span>
-                        </td>
-                      </tr>";
+            if ($filter === 'paid') {
+                $whereClause = "AND `Cuota pagada` = 1";
+            } elseif ($filter === 'unpaid') {
+                $whereClause = "AND `Cuota pagada` = 0";
             }
-        } else {
-            echo "<tr><td colspan='6'>No hay socios registrados en este club</td></tr>";
-        }
 
-        desconectarBD($conexion);
-        ?>
+            $sql = "SELECT Nombre, Usuario, `Cuota pagada`, `Último pago`, `Próximo pago`
+                    FROM Socio
+                    WHERE Club = '$miClub' $whereClause";
+            $selectMiTabla = $conexion->prepare($sql);
+            $selectMiTabla->execute();
+            $result = $selectMiTabla->get_result();
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $nombre = $row['Nombre'];
+                    $usuario = $row['Usuario'];
+                    $cuota_pagada = $row['Cuota pagada'];
+                    $fecha_ultimo_pago = date("d-m-Y", strtotime($row['Último pago']));
+                    $fecha_proximo_pago = date("d-m-Y", strtotime($row['Próximo pago']));
+
+                    $checked = $cuota_pagada ? 'checked' : '';
+                    echo "<tr data-id='$usuario'>
+                            <td>$nombre</td>
+                            <td>$usuario</td>
+                            <td>
+                                <label class='switch'>
+                                    <input type='checkbox' class='cuota-switch' data-id='$usuario' $checked>
+                                    <span class='slider'></span>
+                                </label>
+                            </td>
+                            <td class='fecha-ultimo-pago' data-id='$usuario'>$fecha_ultimo_pago</td>
+                            <td class='fecha-proximo-pago' data-id='$usuario'>$fecha_proximo_pago</td>
+                            <td>
+                                <span class='delete-button' data-id='$usuario'><i class='fa-solid fa-trash'></i></span>
+                            </td>
+                          </tr>";
+                }
+            } else {
+                echo "<tr><td colspan='6'>No hay socios registrados en este club</td></tr>";
+            }
+
+            desconectarBD($conexion);
+            ?>
+        </tbody>
     </table>
 
     <!-- Modal -->
@@ -189,8 +207,8 @@
                 body: new URLSearchParams({
                     socioUsuario: socioUsuario,
                     cuotaPagada: cuotaPagada,
-                    fechaUltimoPago: isManualChange && cuotaPagada ? fechaUltimoPago : null, 
-                    fechaProximoPago: isManualChange && cuotaPagada ? fechaProximoPago : null
+                    fechaUltimoPago: isManualChange && cuotaPagada ? fechaUltimoPago : null, // Only send if manual change and cuota is paid
+                    fechaProximoPago: isManualChange && cuotaPagada ? fechaProximoPago : null // Only send if manual change and cuota is paid
                 }).toString()
             })
             .then(response => response.json())
@@ -210,6 +228,11 @@
             let [year, month, day] = dateString.split('-');
             return `${day}-${month}-${year}`;
         }
+
+        document.getElementById('filter').addEventListener('change', function () {
+            let filter = this.value;
+            window.location.href = `?filter=${filter}`;
+        });
     </script>
 </body>
 
