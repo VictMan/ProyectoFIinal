@@ -18,17 +18,72 @@
                 background-color: <?php echo $headerColor; ?>;
             }
         <?php endif; ?>
+        .popup-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #f44336;
+            color: white;
+            font-size: 18px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+        }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        function showPopupMessage(message) {
+            // Create or select existing overlay and popup
+            let overlay = $('.popup-overlay');
+            if (overlay.length === 0) {
+                overlay = $('<div class="popup-overlay"></div>');
+                $('body').append(overlay);
+            }
+            let popup = $('.popup-message');
+            if (popup.length === 0) {
+                popup = $('<div class="popup-message"></div>');
+                $('body').append(popup);
+            }
+
+            // Set the message
+            popup.text(message);
+
+            // Show overlay and popup
+            overlay.fadeIn(300);
+            popup.css({ left: '-50%' }).show().animate({ left: '50%' }, 500);
+
+            // Close on click
+            overlay.on('click', () => {
+                popup.animate({ left: '-50%' }, 500, function () {
+                    $(this).hide();
+                });
+                overlay.fadeOut(300);
+            });
+        }
+    </script>
 </head>
 <body>
 <?php
 session_start();
-if (!isset($_SESSION['username'])|| $_SESSION['type'] !== 'socio') {
+if (!isset($_SESSION['username']) || $_SESSION['type'] !== 'socio') {
     header('Location: login.php');
     exit();
 }
 include_once('../includes/cabecera.php');
-include_once ('../../Database/conexion.php');
+include_once('../../Database/conexion.php');
 $conexion = conectarBD();
 
 $userUsername = $_SESSION['username'];
@@ -74,31 +129,37 @@ if ($result->num_rows > 0) {
 desconectarBD($conexion);
 ?>
 
-    <h2>Información de Pagos</h2>
-    <h3>Club: <?php echo $nombreClub; ?></h3>
-    <img src="<?php echo $fotoPerfil; ?>" alt="Foto de perfil" class="profile-photo">
-    <table class="info-table">
-        <tr>
-            <th>Nombre</th>
-            <th>Fecha del último pago</th>
-            <th>Fecha del próximo pago</th>
-            <th>Estado de pago</th>
-            <th>Último justificante</th>
-        </tr>
-        <tr>
-            <td><?php echo $nombre; ?></td>
-            <td><?php echo $fecha_ultimo_pago; ?></td>
-            <td><?php echo $fecha_proximo_pago; ?></td>
-            <td><?php echo $status_icon; ?></td>
-            <td>
+<h2>Información de Pagos</h2>
+<h3>Club: <?php echo $nombreClub; ?></h3>
+<img src="<?php echo $fotoPerfil; ?>" alt="Foto de perfil" class="profile-photo">
+<table class="info-table">
+    <tr>
+        <th>Nombre</th>
+        <th>Fecha del último pago</th>
+        <th>Fecha del próximo pago</th>
+        <th>Estado de pago</th>
+        <th>Último justificante</th>
+    </tr>
+    <tr>
+        <td><?php echo $nombre; ?></td>
+        <td><?php echo $fecha_ultimo_pago; ?></td>
+        <td><?php echo $fecha_proximo_pago; ?></td>
+        <td><?php echo $status_icon; ?></td>
+        <td>
+            <?php if ($cuota_pagada) { ?>
                 <a href="../instruments/generar_factura.php?usuario=<?php echo $userUsername; ?>" target="_blank">
                     <i class="fas fa-file-pdf status-icon"></i>
                 </a>
-            </td>
-        </tr>
-        <?php if (empty($nombre)) { ?>
-            <tr><td colspan="5">No se encontró información de pagos</td></tr>
-        <?php } ?>
-    </table>
+            <?php } else { ?>
+                <a href="javascript:void(0)" onclick="showPopupMessage('Tu cuota no está pagada, no puedes descargar este justificante')">
+                    <i class="fas fa-file-pdf status-icon"></i>
+                </a>
+            <?php } ?>
+        </td>
+    </tr>
+    <?php if (empty($nombre)) { ?>
+        <tr><td colspan="5">No se encontró información de pagos</td></tr>
+    <?php } ?>
+</table>
 </body>
 </html>
