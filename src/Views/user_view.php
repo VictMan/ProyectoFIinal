@@ -42,6 +42,11 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
         }
+        .schedule-image {
+            margin-top: 20px;
+            max-width: 100%;
+            height: auto;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
@@ -88,18 +93,20 @@ $conexion = conectarBD();
 
 $userUsername = $_SESSION['username'];
 
-// Obtener el nombre del club y la foto de perfil
-$clubQuery = "SELECT Club.Nombre, Socio.Foto 
+// Obtener el nombre del club, la foto de perfil y la imagen del horario
+$clubQuery = "SELECT Club.Nombre, Socio.Foto, Club.HorarioImagen 
               FROM Club 
               JOIN Socio ON Club.Nombre = Socio.Club 
               WHERE Socio.Usuario = '$userUsername'";
 $clubResult = $conexion->query($clubQuery);
 $nombreClub = '';
 $fotoPerfil = '';
+$horarioImagen = '';
 if ($clubResult->num_rows > 0) {
     $clubRow = $clubResult->fetch_assoc();
     $nombreClub = $clubRow['Nombre'];
     $fotoPerfil = $clubRow['Foto'];
+    $horarioImagen = $clubRow['HorarioImagen'];
 }
 
 // Usar foto genérica si no hay foto de perfil
@@ -161,5 +168,10 @@ desconectarBD($conexion);
         <tr><td colspan="5">No se encontró información de pagos</td></tr>
     <?php } ?>
 </table>
+
+<?php if (!empty($horarioImagen)): ?>
+    <h3>Horario del Club</h3>
+    <img src="<?php echo $horarioImagen; ?>" alt="Horario del club" class="schedule-image">
+<?php endif; ?>
 </body>
 </html>

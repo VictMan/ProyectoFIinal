@@ -55,8 +55,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } elseif (isset($_POST['update_color'])) {
         $color = $_POST['color'];
-        setcookie('headerColor', $color, time() + (86400 * 30), "/"); // 30 días de duración
+        setcookie('headerColor', $color, time() + (86400 * 365), "/");
         $success_message = "El color del encabezado ha sido actualizado.";
+    } elseif (isset($_POST['update_schedule'])) {
+        if (isset($_FILES["horario"]) && $_FILES["horario"]["error"] == 0) {
+            $target_dir = "../../Database/horarios/";
+            $target_file = $target_dir . basename($_FILES["horario"]["name"]);
+            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+            $check = getimagesize($_FILES["horario"]["tmp_name"]);
+            if ($check === false) {
+                $error_message = "El archivo no es una imagen.";
+            } elseif ($_FILES["horario"]["size"] > 500000) {
+                $error_message = "El archivo es demasiado grande.";
+            } elseif ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
+                $error_message = "Solo se permiten archivos JPG, JPEG y PNG.";
+            } elseif (empty($error_message)) {
+                if (move_uploaded_file($_FILES["horario"]["tmp_name"], $target_file)) {
+                    $sql = "UPDATE Club SET HorarioImagen = ? WHERE Usuario = ?";
+                    $stmt = $conexion->prepare($sql);
+                    $stmt->bind_param("ss", $target_file, $usuario);
+
+                    if ($stmt->execute()) {
+                        $success_message = "El horario ha sido actualizado con éxito.";
+                    } else {
+                        $error_message = "Error al actualizar la imagen del horario.";
+                    }
+                    $stmt->close();
+                } else {
+                    $error_message = "Error al subir el archivo del horario.";
+                }
+            }
+        } else {
+            $error_message = "No se ha subido ningún archivo o ha ocurrido un error.";
+        }
     }
 }
 desconectarBD($conexion);
@@ -96,6 +128,12 @@ desconectarBD($conexion);
                 <label for="imagen">Cambiar o añadir logo:</label>
                 <input type="file" id="imagen" name="imagen" required><br>
                 <button type="submit" name="update_image">Actualizar logo</button>
+            </form>
+            <h3>Subir horario del club</h3>
+            <form action="configuracion.php" method="POST" enctype="multipart/form-data">
+                <label for="horario">Subir o cambiar el horario:</label>
+                <input type="file" id="horario" name="horario" accept="image/*" required><br>
+                <button type="submit" name="update_schedule">Subir horario</button>
             </form>
         <?php endif; ?>
 
