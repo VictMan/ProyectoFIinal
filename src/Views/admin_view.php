@@ -207,8 +207,8 @@
                 body: new URLSearchParams({
                     socioUsuario: socioUsuario,
                     cuotaPagada: cuotaPagada,
-                    fechaUltimoPago: isManualChange && cuotaPagada ? fechaUltimoPago : null, // Only send if manual change and cuota is paid
-                    fechaProximoPago: isManualChange && cuotaPagada ? fechaProximoPago : null // Only send if manual change and cuota is paid
+                    fechaUltimoPago: isManualChange && cuotaPagada ? fechaUltimoPago : null,
+                    fechaProximoPago: isManualChange && cuotaPagada ? fechaProximoPago : null
                 }).toString()
             })
             .then(response => response.json())
