@@ -89,6 +89,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $error_message = "No se ha subido ningún archivo o ha ocurrido un error.";
         }
+    } elseif (isset($_POST['update_email'])) {
+        $correo = $_POST['correo'];
+        if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+            $error_message = "Formato de correo inválido.";
+        } else {
+            if ($tipo == 'socio') {
+                $sql = "UPDATE Socio SET Email = ? WHERE Usuario = ?";
+            } else {
+                $sql = "UPDATE Club SET Email = ? WHERE Usuario = ?";
+            }
+            $stmt = $conexion->prepare($sql);
+            $stmt->bind_param("ss", $correo, $usuario);
+            if ($stmt->execute()) {
+                $success_message = "El correo electrónico ha sido actualizado con éxito.";
+            } else {
+                $error_message = "Error al actualizar el correo electrónico.";
+            }
+            $stmt->close();
+        }
     }
 }
 desconectarBD($conexion);
@@ -107,6 +126,34 @@ desconectarBD($conexion);
                 background-color: <?php echo $_COOKIE['headerColor']; ?>;
             }
         <?php endif; ?>
+        .popup {
+            padding: 50px;
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 20px;
+            position: fixed;
+            z-index: 1;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 17px;
+        }
+
+        .popup.show {
+            visibility: visible;
+        }
+
+        .popup .close {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -116,6 +163,7 @@ desconectarBD($conexion);
     <h2>Configuración</h2>
     <div class="configuracion-content">
         <?php if ($tipo === 'socio'): ?>
+            <!-- Formulario para cambiar foto de perfil -->
             <h3>Cambiar foto de perfil</h3>
             <form action="configuracion.php" method="POST" enctype="multipart/form-data">
                 <label for="imagen">Cambiar o añadir foto de perfil:</label>
@@ -123,12 +171,14 @@ desconectarBD($conexion);
                 <button type="submit" name="update_image">Actualizar foto de perfil</button>
             </form>
         <?php else: ?>
+            <!-- Formulario para cambiar logo -->
             <h3>Cambiar logo</h3>
             <form action="configuracion.php" method="POST" enctype="multipart/form-data">
                 <label for="imagen">Cambiar o añadir logo:</label>
                 <input type="file" id="imagen" name="imagen" required><br>
                 <button type="submit" name="update_image">Actualizar logo</button>
             </form>
+            <!-- Formulario para subir horario -->
             <h3>Subir horario del club</h3>
             <form action="configuracion.php" method="POST" enctype="multipart/form-data">
                 <label for="horario">Subir o cambiar el horario:</label>
@@ -137,6 +187,15 @@ desconectarBD($conexion);
             </form>
         <?php endif; ?>
 
+        <!-- Formulario para cambiar correo electrónico -->
+        <h3>Cambiar correo electrónico</h3>
+        <form action="configuracion.php" method="POST">
+            <label for="correo">Nuevo correo electrónico:</label>
+            <input type="email" id="correo" name="correo" required value="<?php echo isset($_POST['correo']) ? $_POST['correo'] : ''; ?>"><br>
+            <button type="submit" name="update_email">Actualizar correo electrónico</button>
+        </form>
+
+        <!-- Formulario para cambiar color del encabezado -->
         <h3>Cambiar color del encabezado</h3>
         <form action="configuracion.php" method="POST">
             <label for="color">Seleccionar color:</label>
@@ -144,12 +203,36 @@ desconectarBD($conexion);
             <button type="submit" name="update_color">Actualizar color del encabezado</button>
         </form>
 
-        <?php if (!empty($error_message)): ?>
-            <div style="color: red;"><?php echo $error_message; ?></div>
-        <?php endif; ?>
+        <!-- Popup para mostrar mensajes -->
+        <div id="popup" class="popup">
+            <span class="close" onclick="document.getElementById('popup').style.visibility='hidden';">&times;</span>
+            <span id="popup_message"></span>
+        </div>
 
-        <?php if (!empty($success_message)): ?>
-            <div style="color: green;"><?php echo $success_message; ?></div>
+        <?php if ($success_message): ?>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var popup = document.getElementById('popup');
+                    var popupMessage = document.getElementById('popup_message');
+                    popupMessage.textContent = "<?php echo $success_message; ?>";
+                    popup.classList.add('show');
+                    setTimeout(function() {
+                        popup.classList.remove('show');
+                    }, 3000);
+                });
+            </script>
+        <?php elseif ($error_message): ?>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var popup = document.getElementById('popup');
+                    var popupMessage = document.getElementById('popup_message');
+                    popupMessage.textContent = "<?php echo $error_message; ?>";
+                    popup.classList.add('show');
+                    setTimeout(function() {
+                        popup.classList.remove('show');
+                    }, 3000);
+                });
+            </script>
         <?php endif; ?>
     </div>
 </body>
