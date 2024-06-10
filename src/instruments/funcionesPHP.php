@@ -21,4 +21,24 @@ function comprobarUserName($userName)
     }
     return $error_message;
 }
+function dibuja_select($nomSel, $tabla, $campo)
+    {
+        $html = "<select name='$nomSel'>\n";
+        $html .= "<option value='Todos'>Todos</option>\n";
+        $conexion = conectarBD();
+        $sql = "SELECT DISTINCT $campo FROM $tabla ORDER BY $campo";
+        $res = $conexion->query($sql);
+
+        while ($fila = $res->fetch_array()) {
+            $valor = $fila[$campo];
+            $selected = isset($_POST[$nomSel]) && $_POST[$nomSel] == $valor ? "selected" : "";
+            $html .= "<option value='$valor' $selected>$valor</option>\n";
+        }
+
+        $res->free();
+        desconectarBD($conexion);
+        $html .= "</select>\n";
+
+        return $html;
+    }
 ?>
