@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="submit">Iniciar sesión</button>
     </form>
     <div id='enlaces'>
-        <a href="password_reset.php">Recuperar contraseña</a><br>
+        <a href="recuperar_password.php">Recuperar contraseña</a><br>
         <a href="register_user.php">Crear cuenta como usuario</a><br>
         <a href="register_admin.php">Crear cuenta como gimnasio/club</a>
     </div>

@@ -15,10 +15,12 @@
     $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
     $userName = isset($_POST['userName']) ? $_POST['userName'] : '';
     $clubName = isset($_POST['club']) ? $_POST['club'] : '';
+    $email = isset($_POST['correo']) ? $_POST['correo'] : '';
     $password = isset($_POST['contraseña']) ? $_POST['contraseña'] : '';
     $nombreErr = '';
     $clubNameErr = '';
     $userNameErr = '';
+    $emailErr = '';
 
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (empty($nombre)) {
@@ -48,7 +50,17 @@
             desconectarBD($conexion);
         }
 
-        if (empty(trim($nombreErr)) && empty(trim($clubNameErr)) && empty(trim($userNameErr))) {
+        if (empty($email)) {
+            $emailErr = "Por favor, introduce tu correo electrónico";
+        } else {
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $emailErr = "Formato de correo inválido";
+            } else {
+                $emailErr = "";
+            }
+        }
+
+        if (empty(trim($nombreErr)) && empty(trim($clubNameErr)) && empty(trim($userNameErr)) && empty(trim($emailErr))) {
             $conexion = conectarBD();
             $logoPath = '';
 
@@ -74,7 +86,7 @@
 
             $passCifrada = password_hash($password, PASSWORD_DEFAULT);
 
-            $sql = "INSERT INTO club(Propietario, Nombre, Usuario, Contraseña, Logo) VALUES('$nombre', '$clubName', '$userName', '$passCifrada', '$logoPath')";
+            $sql = "INSERT INTO club(Propietario, Nombre, Usuario, Contraseña, Logo, Email) VALUES('$nombre', '$clubName', '$userName', '$passCifrada', '$logoPath', '$email')";
             if ($conexion->query($sql) === true) {
                 header('Location: ./login.php');
                 echo "Registro insertado correctamente.";
@@ -118,6 +130,12 @@
         <input type="text" id="userName" name="userName" placeholder="Nombre de Usuario" value="<?php echo $userName ?>">
         <br>
         <span class="error"><?php echo $userNameErr; ?></span>
+        <br><br>
+
+        <label>Correo electrónico:</label>
+        <input type="email" id="correo" name="correo" placeholder="Email" value="<?php echo $email ?>">
+        <br>
+        <span class="error"><?php echo $emailErr; ?></span>
         <br><br>
 
         <label>Contraseña:</label><br>

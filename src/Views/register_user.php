@@ -14,31 +14,12 @@
     $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
     $contraseña = isset($_POST['contraseña']) ? $_POST['contraseña'] : '';
     $userName = isset($_POST['userName']) ? $_POST['userName'] : '';
+    $email = isset($_POST['correo']) ? $_POST['correo'] : '';
     $club = isset($_POST['selectClub']) ? $_POST['selectClub'] : '';
     $nombreErr = '';
     $userNameErr = '';
     $clubErr = '';
-
-    function dibuja_select($nomSel, $tabla, $campo)
-    {
-        $html = "<select name='$nomSel'>\n";
-        $html .= "<option value='Todos'>Todos</option>\n";
-        $conexion = conectarBD();
-        $sql = "SELECT DISTINCT $campo FROM $tabla ORDER BY $campo";
-        $res = $conexion->query($sql);
-
-        while ($fila = $res->fetch_array()) {
-            $valor = $fila[$campo];
-            $selected = isset($_POST[$nomSel]) && $_POST[$nomSel] == $valor ? "selected" : "";
-            $html .= "<option value='$valor' $selected>$valor</option>\n";
-        }
-
-        $res->free();
-        desconectarBD($conexion);
-        $html .= "</select>\n";
-
-        return $html;
-    }
+    $emailErr = '';
     ?>
 </head>
 
@@ -62,14 +43,24 @@
             $clubErr = '';
         }
 
-        if (empty(trim($nombreErr)) && empty(trim($userNameErr)) && empty(trim($clubErr))) {
+        if (empty($email)) {
+            $emailErr = "Por favor, introduce tu correo electrónico";
+        } else {
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $emailErr = "Formato de correo inválido";
+            } else {
+                $emailErr = "";
+            }
+        }
+
+        if (empty(trim($nombreErr)) && empty(trim($userNameErr)) && empty(trim($clubErr)) && empty(trim($emailErr))) {
             $conexion = conectarBD();
 
             $foto = '';
             if (isset($_FILES['Foto']) && $_FILES['Foto']['error'] === UPLOAD_ERR_OK) {
                 $fileType = mime_content_type($_FILES['Foto']['tmp_name']);
                 if (in_array($fileType, ['image/jpeg', 'image/png', 'image/gif'])) {
-                    $Foto = basename($_FILES['Foto']['name']);
+                    $foto = basename($_FILES['Foto']['name']);
                     $uploadDir = '../../public/img/';
                     $uploadFile = $uploadDir . $foto;
 
@@ -85,7 +76,7 @@
 
             $hashedPassword = password_hash($contraseña, PASSWORD_DEFAULT);
 
-            $sql = "INSERT INTO socio (Nombre, Usuario, Contraseña, `Cuota Pagada`, `Último pago`, `Próximo pago`, Club, Foto) VALUES ('$nombre', '$userName', '$hashedPassword', 'false', '', '', '$club', '$foto')";
+            $sql = "INSERT INTO socio (Nombre, Usuario, Contraseña, `Cuota Pagada`, `Último pago`, `Próximo pago`, Club, Foto, Email) VALUES ('$nombre', '$userName', '$hashedPassword', 'false', '', '', '$club', '$foto', '$email')";
             if ($conexion->query($sql) === true) {
                 header('Location: ./login.php');
                 echo "Registro insertado correctamente.";
@@ -136,6 +127,12 @@
             value="<?php echo $userName ?>">
         <br>
         <span class="error"><?php echo $userNameErr; ?></span>
+        <br><br>
+
+        <label>Correo electrónico:</label>
+        <input type="email" id="correo" name="correo" placeholder="Email" value="<?php echo $email ?>">
+        <br>
+        <span class="error"><?php echo $emailErr; ?></span>
         <br><br>
 
         <p>Club: <?php echo dibuja_select("selectClub", "Club", "nombre") ?></p>
