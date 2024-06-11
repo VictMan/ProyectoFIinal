@@ -1,194 +1,93 @@
-body {
-    font-family: Arial, sans-serif;
+/* Estilos generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Courier New', Courier, monospace;    
 }
 
-nav {
-    background-color: #333;
-    overflow: hidden;
+/* Estilos del header */
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a202c;
+    padding-bottom: 13px;
+    padding-top: 13px;
+    width: 100%;
 }
 
-nav li {
-    float: left;
-    display: block;
+#appName {
     color: white;
-    list-style-type: none;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
+    font-size: 1.3em;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+}
+#icono{
+    color:white;
+    font-size: 30px;
+}
+.logo-container {
+    display: flex;
+    align-items: center;
+    margin-left: 2.5em;
 }
 
-nav a:hover {
-    background-color: #ddd;
-    color: black;
-}
-
-.menu-icon {
-    display: none;
-    float: right;
-    padding: 14px 16px;
-    cursor: pointer;
-}
-
-.menu-icon i {
-    color: white;
-}
-
-.club-logo {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.switch {
-    position: relative;
-    display: inline-block;
+.logo-container img {
     width: 60px;
-    height: 34px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
+    height: 60px;
     border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: #2196F3;
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
-}
-
-.logout-button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 20px 0;
-    background-color: #f44336;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-    text-align: center;
-    text-decoration: none;
-}
-
-.logout-button i {
     margin-right: 10px;
 }
-.status-icon {
-    font-size: 24px;
+
+#menu-hamburguesa {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: relative;
+    margin-right: 2.5em;
 }
-.status-paid {
-    color: green;
-}
-.status-unpaid {
-    color: red;
-}
-.info-table {
-    width: 80%;
-    border-collapse: collapse;
-    margin: 0 auto;
-}
-.info-table th, .info-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-.info-table th {
-    text-align: left;
-}
-.profile-photo {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-}
-.modal {
+
+/* Estilos del menú desplegable */
+#hamburguesa {
     display: none;
-    position: fixed;
-    z-index: 1;
+}
+
+.menu {
+    background-color: #1a202c;
+    bottom: 0;
+    height: 40%;
     left: 0;
-    top: 0;
+    position: fixed;
+    top: 10%;
+    transform: translate3d(0px, -100%, 0px);
+    transition: transform 0.35s cubic-bezier(0.05, 1.04, 0.72, 0.98) 0s;
     width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.4);
-    padding-top: 60px;
+    z-index: -1;
 }
 
-.modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 300px;
+#hamburguesa:checked~.menu {
+    transform: translateY(0);
+}
+.menu li {
+    padding: 1rem;
+    margin: 1px;
     text-align: center;
-    border-radius: 10px;
+    font-weight: bold;
+    border-bottom: 1px solid white; 
 }
 
-.close, .confirm, .cancel {
+.menu li a {
+    text-decoration: none;
+    font-size: 20px;
     color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
+    display: block; 
+    padding: 1.33rem; 
 }
 
-.close {
-    background-color: #aaa;
+.menu li:hover {
+    background-color: #417BBD;
 }
 
-.confirm {
-    background-color: #4CAF50;
-}
-
-.cancel {
-    background-color: #f44336;
-}
-
-.close:hover, .close:focus, .confirm:hover, .confirm:focus, .cancel:hover, .cancel:focus {
-    background-color: #555;
-}
-@media screen and (max-width: 600px) {
-    nav a {
-        float: none;
-        display: none;
-        text-align: left;
-    }
-
-    nav a.icon {
-        float: right;
-        display: block;
-    }
-
-    .menu-icon {
-        display: block;
-    }
-}
+/*diseño de configuracion php*/
