@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de usuario</title>
+    <link rel="stylesheet" href="../../public/css/styles.css">
     <script src="../instruments/jquery-3.7.1.min.js"></script>
     <script src="../instruments/funciones.js"></script>
     <?php
-    include_once('../../Database/conexion.php');
-    include_once('../instruments/funcionesPHP.php');
+    include_once ('../../Database/conexion.php');
+    include_once ('../instruments/funcionesPHP.php');
 
     $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
     $contraseña = isset($_POST['contraseña']) ? $_POST['contraseña'] : '';
@@ -23,7 +24,7 @@
     ?>
 </head>
 
-<body>
+<m>
     <?php
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (empty($nombre)) {
@@ -115,47 +116,55 @@
         });
     </script>
 
-    <form id="nuevoUsuario" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
-        <label>Nombre y apellido:</label>
-        <input type="text" id="nombre" name="nombre" placeholder="Nombre y apellido" value="<?php echo $nombre ?>">
-        <br>
-        <span class="error"><?php echo $nombreErr; ?></span>
-        <br><br>
+    <?php
+    include_once ('../includes/cabecera.php');
+    ?>
+    <main>
+        <form id="nuevoUsuario" class="registro" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
+            <label>Nombre y apellido:</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Nombre y apellido" value="<?php echo $nombre ?>">
+            <br>
+            <span class="error"><?php echo $nombreErr; ?></span>
+            <br><br>
 
-        <label>Nombre de Usuario:</label>
-        <input type="text" id="userName" name="userName" placeholder="Nombre de Usuario"
-            value="<?php echo $userName ?>">
-        <br>
-        <span class="error"><?php echo $userNameErr; ?></span>
-        <br><br>
+            <label>Nombre de Usuario:</label>
+            <input type="text" id="userName" name="userName" placeholder="Nombre de Usuario"
+                value="<?php echo $userName ?>">
+            <br>
+            <span class="error"><?php echo $userNameErr; ?></span>
+            <br><br>
 
-        <label>Correo electrónico:</label>
-        <input type="email" id="correo" name="correo" placeholder="Email" value="<?php echo $email ?>">
-        <br>
-        <span class="error"><?php echo $emailErr; ?></span>
-        <br><br>
+            <label>Correo electrónico:</label>
+            <input type="email" id="correo" name="correo" placeholder="Email" value="<?php echo $email ?>">
+            <br>
+            <span class="error"><?php echo $emailErr; ?></span>
+            <br><br>
 
-        <p>Club: <?php echo dibuja_select("selectClub", "Club", "nombre") ?></p>
-        <span class="error"><?php echo $clubErr; ?></span>
+            <p>Club: <?php echo dibuja_select("selectClub", "Club", "nombre") ?></p>
+            <span class="error"><?php echo $clubErr; ?></span>
 
-        <br><br>
-        <label>Contraseña:</label>
-        <input type="password" id="contraseña" name="contraseña" placeholder="Contraseña">
-        <br><br>
+            <br><br>
+            <label>Contraseña:</label>
+            <input type="password" id="contraseña" name="contraseña" placeholder="Contraseña">
+            <br><br>
 
-        <label>Confirma contraseña:</label>
-        <input type="password" id="contraseña2" name="contraseña2" placeholder="Confirma contraseña">
-        <span id='error-container' class='error'></span>
-        <br><br>
+            <label>Confirma contraseña:</label>
+            <input type="password" id="contraseña2" name="contraseña2" placeholder="Confirma contraseña">
+            <span id='error-container' class='error'></span>
+            <br><br>
 
-        <label>Foto de perfil:</label>
-        <input type="file" id="fotoPerfil" name="fotoPerfil"><br>
-        <span id='file-error-container' class='error'></span>
-        <br><br>
+            <label>Foto de perfil:</label>
+            <input type="file" id="fotoPerfil" name="fotoPerfil"><br>
+            <span id='file-error-container' class='error'></span>
+            <br><br>
 
-        <input type="submit" name="crearUsuario" id="crearUsuario" value="Crear Perfil">
-        <br>
-    </form>
-</body>
+            <input type="submit" name="crearUsuario" id="crearUsuario" value="Crear Perfil">
+            <br>
+        </form>
+    </main>
+    <?php
+    include_once ('../includes/pie.html');
+    ?>
+    </body>
 
 </html>
