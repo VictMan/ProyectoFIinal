@@ -16,7 +16,6 @@ $success_message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['update_image'])) {
-        // Verificar si se ha subido un archivo
         if (isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] == 0) {
             $target_dir = "../../Database/imagesPerfil/";
             $target_file = $target_dir . basename($_FILES["imagen"]["name"]);
@@ -119,6 +118,7 @@ desconectarBD($conexion);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../public/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Configuración</title>
     <style>
         <?php if(isset($_COOKIE['headerColor'])): ?>
@@ -160,50 +160,56 @@ desconectarBD($conexion);
 <?php
     include_once('../includes/cabecera.php');
 ?>
+<main id="configuracionMain">
     <h2>Configuración</h2>
     <div class="configuracion-content">
         <?php if ($tipo === 'socio'): ?>
-            <!-- Formulario para cambiar foto de perfil -->
+            <div id = "card">
             <h3>Cambiar foto de perfil</h3>
             <form action="configuracion.php" method="POST" enctype="multipart/form-data">
                 <label for="imagen">Cambiar o añadir foto de perfil:</label>
                 <input type="file" id="imagen" name="imagen" required><br>
                 <button type="submit" name="update_image">Actualizar foto de perfil</button>
             </form>
+            </div>
         <?php else: ?>
-            <!-- Formulario para cambiar logo -->
+            <div id = "card">
             <h3>Cambiar logo</h3>
             <form action="configuracion.php" method="POST" enctype="multipart/form-data">
                 <label for="imagen">Cambiar o añadir logo:</label>
                 <input type="file" id="imagen" name="imagen" required><br>
                 <button type="submit" name="update_image">Actualizar logo</button>
             </form>
-            <!-- Formulario para subir horario -->
+            </div>
+
+            <div id = "card">
             <h3>Subir horario del club</h3>
             <form action="configuracion.php" method="POST" enctype="multipart/form-data">
                 <label for="horario">Subir o cambiar el horario:</label>
                 <input type="file" id="horario" name="horario" accept="image/*" required><br>
                 <button type="submit" name="update_schedule">Subir horario</button>
             </form>
+            </div>
         <?php endif; ?>
 
-        <!-- Formulario para cambiar correo electrónico -->
+        <div id = "card">
         <h3>Cambiar correo electrónico</h3>
         <form action="configuracion.php" method="POST">
             <label for="correo">Nuevo correo electrónico:</label>
             <input type="email" id="correo" name="correo" required value="<?php echo isset($_POST['correo']) ? $_POST['correo'] : ''; ?>"><br>
             <button type="submit" name="update_email">Actualizar correo electrónico</button>
         </form>
-
-        <!-- Formulario para cambiar color del encabezado -->
+        </div>
+        <div id = "card">
         <h3>Cambiar color del encabezado</h3>
         <form action="configuracion.php" method="POST">
             <label for="color">Seleccionar color:</label>
+            <div id="container-color">
             <input type="color" id="color" name="color" value="<?php echo isset($_COOKIE['headerColor']) ? $_COOKIE['headerColor'] : '#ffffff'; ?>"><br>
             <button type="submit" name="update_color">Actualizar color del encabezado</button>
+            </div>
         </form>
-
-        <!-- Popup para mostrar mensajes -->
+        </div>
         <div id="popup" class="popup">
             <span class="close" onclick="document.getElementById('popup').style.visibility='hidden';">&times;</span>
             <span id="popup_message"></span>
@@ -235,5 +241,9 @@ desconectarBD($conexion);
             </script>
         <?php endif; ?>
     </div>
+</main>
+<?php
+    include_once('../includes/pie.html');
+?>
 </body>
 </html>
