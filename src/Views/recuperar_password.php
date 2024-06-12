@@ -52,19 +52,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../public/css/styles.css">
     <title>Recuperar Contraseña</title>
 </head>
+
 <body>
-    <h2>Recuperar Contraseña</h2>
-    <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-        <label for="email">Correo Electrónico:</label><br>
-        <input type="email" id="email" name="email" placeholder="Correo Electrónico" required><br>
-        <span style="color: red;"><?php echo $error_message; ?></span><br>
-        <button type="submit">Enviar</button>
-    </form>
+    <?php
+    include_once ('../includes/cabecera.php');
+    ?>
+    <main>
+        <form class="registro" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+            <label for="email">Correo Electrónico:</label><br>
+            <input type="email" id="email" name="email" placeholder="Correo Electrónico" required><br>
+            <span style="color: red;"><?php echo $error_message; ?></span><br>
+            <button class="inicioSesion" type="submit">Enviar</button>
+        </form>
+        <div id="boton_atras"><a href="login.php">Volver</a></div>
+    </main>
 </body>
+
 </html>

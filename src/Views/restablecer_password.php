@@ -71,7 +71,7 @@
         });
     </script>
     <h2>Restablecer Contraseña</h2>
-    <form id="restablecerPassword" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+    <form class="registro" id="restablecerPassword" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
         <label>Nombre de Usuario:</label><br>
         <input type="text" name="username" placeholder="Username" value="<?php echo $username ?>"> 
         <br>
