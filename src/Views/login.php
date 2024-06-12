@@ -58,20 +58,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <h2>Iniciar sesión</h2>
-    <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-        <label>Usuario:</label><br>
-        <input type="text" id="username" name="username" placeholder="Usuario" required><br>
-        <label>Contraseña:</label><br>
-        <input type="password" id="password" name="password" placeholder="Contraseña" required><br><br>
-        <span style="color: red;"><?php echo $error_message; ?></span><br>
-        <button type="submit">Iniciar sesión</button>
-    </form>
-    <div id='enlaces'>
-        <a href="recuperar_password.php">Recuperar contraseña</a><br>
-        <a href="register_user.php">Crear cuenta como usuario</a><br>
-        <a href="register_admin.php">Crear cuenta como gimnasio/club</a>
-    </div>
+    <?php
+    include_once ('../includes/cabecera.php');
+    ?>
+    <main>
+        <h2>Iniciar sesión</h2>
+        <div class="registro">
+            <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+                <label>Usuario:</label><br>
+                <input type="text" id="username" name="username" placeholder="Usuario" required><br>
+                <label>Contraseña:</label><br>
+                <input type="password" id="password" name="password" placeholder="Contraseña" required><br><br>
+                <span style="color: red;"><?php echo $error_message; ?></span><br>
+                <button type="submit" class="inicioSesion">Iniciar sesión</button>
+            </form>
+            <div class='enlaces'>
+                <a href="recuperar_password.php">Recuperar contraseña</a><br>
+                <a href="register_user.php">Crear cuenta como usuario</a><br>
+                <a href="register_admin.php">Crear cuenta como gimnasio/club</a>
+            </div>
+        </div>
+    </main>
+    <?php
+    include_once ('../includes/pie.html');
+    ?>
 </body>
 
 </html>
