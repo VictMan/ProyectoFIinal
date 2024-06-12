@@ -1,8 +1,13 @@
+<?php
+session_start();
+?>
+
 <header>
     <div class="logo-container">
         <img src="../../public/img/LogoApp.jpg" id="logo">
         <span id='appName'>CashClubControl</span>
     </div>
+    <?php if (isset($_SESSION['type'])): ?>
     <div class="menu-icons">
         <?php if ($_SESSION['type'] === 'socio'): ?>
             <a href="user_view.php"><i class="fas fa-home"></i></a>
@@ -25,4 +30,5 @@
             <li><a href="logout.php">Cerrar Sesión</a></li>
         </ul>
     </nav>
+    <?php endif; ?>
 </header>
