@@ -163,6 +163,24 @@ desconectarBD($conexion);
 <main id="configuracionMain">
     <h2>Configuración</h2>
     <div class="configuracion-content">
+        <div id = "card">
+        <h3>Cambiar correo electrónico</h3>
+        <form action="configuracion.php" method="POST">
+            <label for="correo">Nuevo correo electrónico:</label>
+            <input type="email" id="correo" name="correo" required value="<?php echo isset($_POST['correo']) ? $_POST['correo'] : ''; ?>"><br>
+            <button type="submit" name="update_email">Actualizar correo electrónico</button>
+        </form>
+        </div>
+        <div id = "card">
+        <h3>Cambiar color del encabezado</h3>
+        <form action="configuracion.php" method="POST">
+            <label for="color">Seleccionar color:</label>
+            <div id="container-color">
+            <input type="color" id="color" name="color" value="<?php echo isset($_COOKIE['headerColor']) ? $_COOKIE['headerColor'] : '#ffffff'; ?>"><br>
+            <button type="submit" name="update_color">Actualizar color del encabezado</button>
+            </div>
+        </form>
+        </div>
         <?php if ($tipo === 'socio'): ?>
             <div id = "card">
             <h3>Cambiar foto de perfil</h3>
@@ -192,24 +210,6 @@ desconectarBD($conexion);
             </div>
         <?php endif; ?>
 
-        <div id = "card">
-        <h3>Cambiar correo electrónico</h3>
-        <form action="configuracion.php" method="POST">
-            <label for="correo">Nuevo correo electrónico:</label>
-            <input type="email" id="correo" name="correo" required value="<?php echo isset($_POST['correo']) ? $_POST['correo'] : ''; ?>"><br>
-            <button type="submit" name="update_email">Actualizar correo electrónico</button>
-        </form>
-        </div>
-        <div id = "card">
-        <h3>Cambiar color del encabezado</h3>
-        <form action="configuracion.php" method="POST">
-            <label for="color">Seleccionar color:</label>
-            <div id="container-color">
-            <input type="color" id="color" name="color" value="<?php echo isset($_COOKIE['headerColor']) ? $_COOKIE['headerColor'] : '#ffffff'; ?>"><br>
-            <button type="submit" name="update_color">Actualizar color del encabezado</button>
-            </div>
-        </form>
-        </div>
         <div id="popup" class="popup">
             <span class="close" onclick="document.getElementById('popup').style.visibility='hidden';">&times;</span>
             <span id="popup_message"></span>
