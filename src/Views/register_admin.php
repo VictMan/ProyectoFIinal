@@ -88,7 +88,7 @@
 
             $sql = "INSERT INTO club(Propietario, Nombre, Usuario, Contraseña, Logo, Email) VALUES('$nombre', '$clubName', '$userName', '$passCifrada', '$logoPath', '$email')";
             if ($conexion->query($sql) === true) {
-                header('Location: ./login.php');
+                header('Location: ../../login.php');
                 echo "Registro insertado correctamente.";
             } else {
                 echo "Error al insertar el registro: " . $conexion->error;

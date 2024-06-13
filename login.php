@@ -1,7 +1,8 @@
 <?php
 session_start();
 $error_message = "";
-include_once ('../../Database/conexion.php');
+include_once ('./Database/conexion.php');
+$inlogin = true;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $conexion = conectarBD();
@@ -13,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['username'] = $user;
         $_SESSION['type'] = 'superadmin';
         desconectarBD($conexion);
-        header('Location: superAdmin.php');
+        header('Location: ./src/Views/superAdmin.php');
         exit();
     }
 
@@ -30,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['username'] = $user;
             $_SESSION['type'] = 'socio';
             desconectarBD($conexion);
-            header('Location: user_view.php');
+            header('Location: ./src/Views/user_view.php');
             exit();
         }
     }
@@ -48,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['username'] = $user;
             $_SESSION['type'] = 'admin';
             desconectarBD($conexion);
-            header('Location: admin_view.php');
+            header('Location: ./src/Views/admin_view.php');
             exit();
         }
     }
@@ -63,14 +64,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../public/css/styles.css">
+    <link rel="stylesheet" href="./public/css/styles.css">
     <title>Iniciar sesión</title>
 </head>
+<style>
+
+</style>
 
 <body>
-    <?php
-    include_once ('../includes/cabecera.php');
-    ?>
+    <header>
+        <div class="logo-container">
+            <img src="./public/img/LogoApp.jpg" id="logo">
+            <span id='appName'>CashClubControl</span>
+        </div>
+    </header>
     <main>
         <h2>Iniciar sesión</h2>
         <div class="registro">
@@ -83,15 +90,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <button type="submit" class="inicioSesion">Iniciar sesión</button>
             </form>
             <div class='enlaces'>
-                <a href="recuperar_password.php">Recuperar contraseña</a><br>
-                <a href="register_user.php">Crear cuenta como usuario</a><br>
-                <a href="register_admin.php">Crear cuenta como gimnasio/club</a>
+                <a href="./src/Views/recuperar_password.php">Recuperar contraseña</a><br>
+                <a href="./src/Views/register_user.php">Crear cuenta como usuario</a><br>
+                <a href="./src/Views/register_admin.php">Crear cuenta como gimnasio/club</a>
             </div>
         </div>
     </main>
-    <?php
-    include_once ('../includes/pie.html');
-    ?>
 </body>
 
 </html>

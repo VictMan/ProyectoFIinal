@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <span style="color: red;"><?php echo $error_message; ?></span><br>
             <button class="inicioSesion" type="submit">Enviar</button>
         </form>
-        <div id="boton_atras"><a href="login.php">Volver</a></div>
+        <div id="boton_atras"><a href="../../login.php">Volver</a></div>
     </main>
 </body>
 

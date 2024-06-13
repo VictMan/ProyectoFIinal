@@ -152,7 +152,7 @@
     <?php
     session_start();
     if (!isset($_SESSION['username']) || $_SESSION['type'] !== 'admin') {
-        header('Location: login.php');
+        header('Location: ../../login.php');
         exit();
     }
     include_once('../../Database/conexion.php');

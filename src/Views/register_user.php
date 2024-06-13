@@ -79,7 +79,7 @@
 
             $sql = "INSERT INTO socio (Nombre, Usuario, Contraseña, `Cuota Pagada`, `Último pago`, `Próximo pago`, Club, Foto, Email) VALUES ('$nombre', '$userName', '$hashedPassword', 'false', '', '', '$club', '$foto', '$email')";
             if ($conexion->query($sql) === true) {
-                header('Location: ./login.php');
+                header('Location: ../../login.php');
                 echo "Registro insertado correctamente.";
             } else {
                 echo "Error al insertar el registro: " . $conexion->error;

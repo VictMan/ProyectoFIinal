@@ -83,7 +83,7 @@
         <span id="error_message" style="color: red;"><?php echo $error_message; ?></span><br><br>
         <button type="submit" id="comprobarPasswords">Restablecer Contraseña</button>
     </form>
-    <a href="login.php">Iniciar sesión</a>
+    <a href="../../login.php">Iniciar sesión</a>
 </body>
 
 </html>
