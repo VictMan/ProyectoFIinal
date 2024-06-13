@@ -8,6 +8,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user = $_POST['username'];
     $pass = $_POST['password'];
 
+    // Comprobar si es superadmin
+    if ($user === 'superadmin' && $pass === 'superadmin') {
+        $_SESSION['username'] = $user;
+        $_SESSION['type'] = 'superadmin';
+        desconectarBD($conexion);
+        header('Location: superAdmin.php');
+        exit();
+    }
+
     // Comprobar si es un socio
     $sql_socio = "SELECT * FROM Socio WHERE Usuario = ?";
     $stmt_socio = $conexion->prepare($sql_socio);
@@ -26,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
+    // Comprobar si es un club
     $sql_club = "SELECT * FROM Club WHERE Usuario = ?";
     $stmt_club = $conexion->prepare($sql_club);
     $stmt_club->bind_param('s', $user);
