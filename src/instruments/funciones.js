@@ -97,8 +97,3 @@ function showPopupMessage(message) {
             let [year, month, day] = dateString.split('-');
             return `${day}-${month}-${year}`;
         }
-
-        document.getElementById('filter').addEventListener('change', function () {
-            let filter = this.value;
-            window.location.href = `?filter=${filter}`;
-        });

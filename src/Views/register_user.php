@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,8 +22,7 @@
     $emailErr = '';
     ?>
 </head>
-
-<m>
+<body>
     <?php
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (empty($nombre)) {
@@ -58,14 +56,14 @@
             $conexion = conectarBD();
 
             $foto = '';
-            if (isset($_FILES['Foto']) && $_FILES['Foto']['error'] === UPLOAD_ERR_OK) {
-                $fileType = mime_content_type($_FILES['Foto']['tmp_name']);
+            if (isset($_FILES['fotoPerfil']) && $_FILES['fotoPerfil']['error'] === UPLOAD_ERR_OK) {
+                $fileType = mime_content_type($_FILES['fotoPerfil']['tmp_name']);
                 if (in_array($fileType, ['image/jpeg', 'image/png', 'image/gif'])) {
-                    $foto = basename($_FILES['Foto']['name']);
+                    $foto = basename($_FILES['fotoPerfil']['name']);
                     $uploadDir = '../../public/img/';
                     $uploadFile = $uploadDir . $foto;
 
-                    if (!move_uploaded_file($_FILES['Foto']['tmp_name'], $uploadFile)) {
+                    if (!move_uploaded_file($_FILES['fotoPerfil']['tmp_name'], $uploadFile)) {
                         echo "Error al subir la foto de perfil.";
                         exit();
                     }
@@ -165,6 +163,5 @@
     <?php
     include_once ('../includes/pie.html');
     ?>
-    </body>
-
+</body>
 </html>
