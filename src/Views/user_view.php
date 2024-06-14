@@ -32,6 +32,10 @@ if (empty($fotoPerfil)) {
     $fotoPerfil = '../../Database/imagesPerfil/perfilGeneric.jpg';
 }
 
+if (empty($logoClub)) {
+    $logoClub = '../../Database/imagesPerfil/default_logo.jpg';
+}
+
 $sql = "SELECT Nombre, `Último pago`, `Próximo pago`, `Cuota pagada`
         FROM Socio
         WHERE Usuario = '$userUsername'";
